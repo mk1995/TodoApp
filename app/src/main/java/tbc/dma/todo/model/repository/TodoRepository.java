@@ -23,6 +23,10 @@ public class TodoRepository {
         return dao.loadTaskById(taskId);
     }
 
+    public LiveData<TodoEntity> getTaskByPriority(int Priority){
+        return dao.loadTaskByPriority(Priority);
+    }
+
     public void updateTask(final TodoEntity task){
         AppDatabase.getDatabaseWriteExecutor().execute(new Runnable() {
             @Override

@@ -29,4 +29,7 @@ public interface TodoDao {
     @Query("Select * from tbl_todoapp where taskID =:taskId")
     LiveData<TodoEntity> loadTaskById(int taskId);
 
+    @Query("Select * from tbl_todoapp where taskPriority =:priority")
+    LiveData<TodoEntity> loadTaskByPriority(int priority);
+
 }
