@@ -1,3 +1,17 @@
 <resources>
     <string name="app_name">Todo</string>
+    <string name="app_title">Todo: Save your important tasks.</string>
+    <string name="searchText">search</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="add_new_task">Add New Task</string>
+
+    <!--Priority Array List-->
+    <string-array name="priority_array">
+        <item>High</item>
+        <item>Medium</item>
+        <item>Low</item>
+    </string-array>
+
 </resources>
