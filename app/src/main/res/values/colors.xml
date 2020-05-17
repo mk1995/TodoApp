@@ -6,7 +6,9 @@
     <color name="colorSearch">#C8C6C6</color>
     <color name="colorSearchText">#060607</color>
     <color name="colorMainActivityBG">#FFFFFF</color>
+    <color name="colorPrimaryLight">#C5CAE9</color>
 
+    <!-- colors taskEntrytask priority selection -->
     <color name="colorHighPriority">#FF0000</color>
     <color name="colorMediumPriority">#1A1ADD</color>
     <color name="colorLowPriority">#30F13D</color>
