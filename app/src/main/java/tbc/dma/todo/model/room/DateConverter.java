@@ -2,7 +2,8 @@ package tbc.dma.todo.model.room;
 
 import androidx.room.TypeConverter;
 
-import java.util.Date;
+import java.sql.Date;
+
 
 public class DateConverter {
     @TypeConverter

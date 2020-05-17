@@ -23,7 +23,7 @@ public class HighPriorityFragmentViewModel extends AndroidViewModel {
         super(application);
         AppDatabase db = AppDatabase.getInstance(application);
         repository = new TodoRepository(db);
-        tasks = repository.getTasks();
+        tasks = repository.getAllTasks();
     }
     public void getTaskByPriority(){
         repository.getTaskByPriority(HIGH_PRIORITY_TASK);

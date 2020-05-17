@@ -15,7 +15,7 @@ public class TodoRepository {
         dao = appDatabase.todoDao();
     }
 
-    public LiveData<List<TodoEntity>> getTasks(){
+    public LiveData<List<TodoEntity>> getAllTasks(){
         return dao.loadAllTasks();
     }
 

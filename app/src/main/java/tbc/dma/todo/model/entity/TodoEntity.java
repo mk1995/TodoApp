@@ -4,7 +4,8 @@ import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
-import java.util.Date;
+import java.sql.Date;
+
 
 @Entity (tableName = "tbl_todoapp")
 public class TodoEntity {
@@ -17,14 +18,13 @@ public class TodoEntity {
     private int taskPriority;
     private Date taskDate;
 
-    @Ignore
     public TodoEntity(String taskTitle, String taskDescription, int taskPriority, Date taskDate) {
         this.taskTitle = taskTitle;
         this.taskDescription = taskDescription;
         this.taskPriority = taskPriority;
         this.taskDate = taskDate;
     }
-
+    @Ignore
     public TodoEntity(int taskID, String taskTitle, String taskDescription, int taskPriority, Date taskDate) {
         this.taskID = taskID;
         this.taskTitle = taskTitle;

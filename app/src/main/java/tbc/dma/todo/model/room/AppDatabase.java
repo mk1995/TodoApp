@@ -14,14 +14,14 @@ import java.util.concurrent.Executors;
 import tbc.dma.todo.model.dao.TodoDao;
 import tbc.dma.todo.model.entity.TodoEntity;
 
-@Database(version = 1, entities = TodoEntity.class, exportSchema = false)
+@Database(version = 1, entities = {TodoEntity.class}, exportSchema = false)
 @TypeConverters(DateConverter.class)
 public abstract class AppDatabase extends RoomDatabase {
     private static final String LOG_TAG = AppDatabase.class.getSimpleName();
 
     private static final Object LOCK = new Object();
     private static String DATABASE_NAME = "TodoApp";
-    static final ExecutorService databaseWriteExecutor = Executors.newFixedThreadPool(3);
+    private static final ExecutorService databaseWriteExecutor = Executors.newFixedThreadPool(3);
 
     public static ExecutorService getDatabaseWriteExecutor() {
         return databaseWriteExecutor;

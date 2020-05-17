@@ -22,7 +22,7 @@ public class AllTasksFragmentViewModel extends AndroidViewModel {
         super(application);
         AppDatabase db = AppDatabase.getInstance(application);
         repository = new TodoRepository(db);
-        tasks = repository.getTasks();
+        tasks = repository.getAllTasks();
     }
     public LiveData<List<TodoEntity>> getTasks(){
         return tasks;
