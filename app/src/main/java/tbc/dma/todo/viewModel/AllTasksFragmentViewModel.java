@@ -14,7 +14,7 @@ import tbc.dma.todo.model.room.AppDatabase;
 
 public class AllTasksFragmentViewModel extends AndroidViewModel {
     //repo
-    TodoRepository repository;
+    private TodoRepository repository;
     //data
     private LiveData<List<TodoEntity>> tasks;
 
@@ -28,7 +28,4 @@ public class AllTasksFragmentViewModel extends AndroidViewModel {
         return tasks;
     }
 
-    public void deleteTask(TodoEntity task){
-        repository.deleteTask(task);
-    }
 }

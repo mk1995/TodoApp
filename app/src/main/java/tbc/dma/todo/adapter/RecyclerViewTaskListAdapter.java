@@ -1,15 +1,14 @@
 package tbc.dma.todo.adapter;
 
-import android.annotation.SuppressLint;
+import android.content.Context;
 import android.graphics.drawable.GradientDrawable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
@@ -17,12 +16,17 @@ import java.util.List;
 import tbc.dma.todo.R;
 import tbc.dma.todo.model.entity.TodoEntity;
 
-public class RVAllTaskAdapter extends RecyclerView.Adapter<RVAllTaskAdapter.ViewHolder> {
+public class RecyclerViewTaskListAdapter extends RecyclerView.Adapter<RecyclerViewTaskListAdapter.ViewHolder> {
 
     //cached copy of data
     private List<TodoEntity> tasks;
     // Member variable to handle item clicks
     private OnItemClickListener mItemClickListener;
+    private Context mContext;
+
+    public RecyclerViewTaskListAdapter(Context cntx) {
+        mContext = cntx;
+    }
 
     public List<TodoEntity> getTasks(){
         return tasks;
@@ -46,13 +50,13 @@ public class RVAllTaskAdapter extends RecyclerView.Adapter<RVAllTaskAdapter.View
 
         switch (priority) {
             case 1:
-                priorityColor = R.color.colorHighPriority;
+                priorityColor = ContextCompat.getColor(mContext, R.color.colorHighPriority);
                 break;
             case 2:
-                priorityColor = R.color.colorMediumPriority;
+                priorityColor = ContextCompat.getColor(mContext, R.color.colorMediumPriority);
                 break;
             case 3:
-                priorityColor = R.color.colorLowPriority;
+                priorityColor =ContextCompat.getColor(mContext, R.color.colorLowPriority);
                 break;
             default:
                 break;
@@ -62,13 +66,13 @@ public class RVAllTaskAdapter extends RecyclerView.Adapter<RVAllTaskAdapter.View
 
     @NonNull
     @Override
-    public RVAllTaskAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_all_tasks, parent, false);
+    public RecyclerViewTaskListAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.task_list_recycler_view, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RVAllTaskAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RecyclerViewTaskListAdapter.ViewHolder holder, int position) {
         holder.bindViews(position);
     }
 
@@ -103,26 +107,23 @@ public class RVAllTaskAdapter extends RecyclerView.Adapter<RVAllTaskAdapter.View
             });
         }
 
+
         public void bindViews(int pos)
         {
             TodoEntity taskEntry = tasks.get(pos);
 
-            //taskTitleView.setText(taskEntry.getTaskTitle());
+            taskTitleView.setText(taskEntry.getTaskTitle());
 
-            /*int priority = taskEntry.getTaskPriority();
-            priorityView.setText(taskEntry.getTaskPriority());
-            GradientDrawable priorityCircle = (GradientDrawable) priorityView.getBackground();
+            int priority = taskEntry.getTaskPriority();
             int priorityColor = getPriorityColor(priority);
-            priorityCircle.setColor(priorityColor);*/
 
-            //dateView.setText((CharSequence) taskEntry.getTaskDate());
+            GradientDrawable priorityCircle = (GradientDrawable) priorityView.getBackground();
+            priorityCircle.setColor(priorityColor);
 
-            Log.d("RV", taskEntry.getTaskTitle());
-            Log.d("RV", taskEntry.getTaskDescription());
-            Log.d("RV", String.valueOf(taskEntry.getTaskPriority()));
-            Log.d("RV", taskEntry.getTaskDate().toString());
+        /*    Log.d("TAG", String.valueOf(priorityColor));
+            Log.d("TAG", String.valueOf(priority));*/
 
-
+            dateView.setText(taskEntry.getTaskDate().toString());
 
         }
     }

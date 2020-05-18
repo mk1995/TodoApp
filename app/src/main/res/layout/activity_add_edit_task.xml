@@ -130,7 +130,8 @@
                 android:id="@+id/buttonAddEditTaskOK"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:text="OK">
+                android:text="OK"
+                android:enabled="false">
             </Button>
         </LinearLayout>
     </LinearLayout>

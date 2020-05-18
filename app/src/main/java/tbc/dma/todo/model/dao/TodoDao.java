@@ -14,7 +14,7 @@ import tbc.dma.todo.model.entity.TodoEntity;
 
 @Dao
 public interface TodoDao {
-    @Query("select * from tbl_todoapp")
+    @Query("select * from tbl_todoapp order by taskDate desc")
     LiveData<List<TodoEntity>> loadAllTasks();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -29,7 +29,7 @@ public interface TodoDao {
     @Query("Select * from tbl_todoapp where taskID =:taskId")
     LiveData<TodoEntity> loadTaskById(int taskId);
 
-    @Query("Select * from tbl_todoapp where taskPriority =:priority")
-    LiveData<TodoEntity> loadTaskByPriority(int priority);
+    @Query("Select * from tbl_todoapp order by taskPriority asc")
+    LiveData<List<TodoEntity>> loadTaskByPriority();
 
 }

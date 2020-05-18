@@ -7,8 +7,8 @@ import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
 public class AddEditTaskViewModelFactory extends ViewModelProvider.NewInstanceFactory {
-    Application application;
-    int taskId;
+    private Application application;
+    private int taskId;
 
     public AddEditTaskViewModelFactory(Application application, int taskId){
         this.application = application;

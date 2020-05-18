@@ -23,8 +23,8 @@ public class TodoRepository {
         return dao.loadTaskById(taskId);
     }
 
-    public LiveData<TodoEntity> getTaskByPriority(int Priority){
-        return dao.loadTaskByPriority(Priority);
+    public LiveData<List<TodoEntity>> getTaskByPriority(){
+        return dao.loadTaskByPriority();
     }
 
     public void updateTask(final TodoEntity task){

@@ -3,6 +3,9 @@ package tbc.dma.todo.view.activity;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -66,24 +69,62 @@ public class AddEditTaskActivity extends AppCompatActivity {
         btnOK = findViewById(R.id.buttonAddEditTaskOK);
     }
 
+    /*textview validation*/
+    private TextWatcher taskInputValidation = new TextWatcher(){
+
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+                 btnOK.setEnabled(!taskTitle.getText().toString().trim().isEmpty() && !taskDescription.getText().toString().trim().isEmpty() && !taskDate.getText().toString().trim().isEmpty());
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+
+        }
+    };
+
     /**
      * onSaveButtonClicked is called when the "save" button is clicked.
      * It retrieves user input and inserts that new task data into the underlying database.
      */
     public void onSaveButtonClicked() {
-        String title = taskTitle.getText().toString();
-        String description = taskDescription.getText().toString();
-        int priority = getPriorityFromViews();
-
         try {
-            Date sqlDate = new Date(new SimpleDateFormat("dd/MM/yyyy", Locale.US).parse(taskDate.getText().toString()).getTime());
-            TodoEntity todo = new TodoEntity(title, description, priority, sqlDate);
-            if(mTaskId == DEFAULT_TASK_ID)
-                addEditTaskViewModel.insertTask(todo);
-            else {
-                todo.setTaskID(mTaskId);
-                addEditTaskViewModel.updateTask(todo);
-            }
+            String title = taskTitle.getText().toString();
+            String description = taskDescription.getText().toString();
+            int priority = getPriorityFromViews();
+            String date = taskDate.getText().toString();
+            /*String toastMsg = null;
+            if(title.isEmpty() || description.isEmpty() || date.isEmpty()){
+                if(title.isEmpty()){
+                     toastMsg = "Please enter Task title.";
+                     taskTitle.isFocusable();
+                }
+                if(description.isEmpty()){
+                    toastMsg = "Please enter Task Description.";
+                }
+                if(date.isEmpty()){
+                    toastMsg = "Please select Task date.";
+                }
+                Toast toast = Toast.makeText(getApplicationContext(), toastMsg, Toast.LENGTH_LONG);
+                toast.setGravity(Gravity.CENTER|Gravity.CENTER_HORIZONTAL, 0, 0);
+                toast.show();*/
+/*            }
+            else{*/
+                Date sqlDate = new Date(new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(date).getTime());
+                TodoEntity todo = new TodoEntity(title, description, priority, sqlDate);
+                if(mTaskId == DEFAULT_TASK_ID)
+                    addEditTaskViewModel.insertTask(todo);
+                else {
+                    todo.setTaskID(mTaskId);
+                    addEditTaskViewModel.updateTask(todo);
+                }
+            //}
+
         } catch (Exception e) {
             // TODO Auto-generated catch block
            Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
@@ -118,10 +159,25 @@ public class AddEditTaskActivity extends AppCompatActivity {
         if(task == null){
             return;
         }
+        int indexPositionValue = task.getTaskPriority();
+        int indexPosition = -1;
+        switch (indexPositionValue){
+            case 1:
+            indexPosition =0;
+            break;
+            case 2:
+                indexPosition = 1;
+                break;
+            case 3:
+                indexPosition = 2;
+                break;
+            default:
+                indexPosition = 0;
+        }
         taskTitle.setText(task.getTaskTitle());
-        taskDescription.setText(task.getTaskDate().toString());
-        taskPriority.setSelection(task.getTaskPriority());
-        //taskPriority.setSelection(((ArrayAdapter<String>)taskPriority.getAdapter()).getPosition(taskPriorityValue));
+        taskDescription.setText(task.getTaskDescription());
+        taskPriority.setSelection(indexPosition);
+        taskDate.setBackground(null);
         taskDate.setText(task.getTaskDate().toString());
     }
 
@@ -145,7 +201,7 @@ public class AddEditTaskActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent, View view,
                                        int position, long id) {
                 taskPriorityValue = taskPriority.getSelectedItem().toString();
-                Toast.makeText(getApplicationContext(), taskPriorityValue, Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(), taskPriorityValue, Toast.LENGTH_SHORT).show();
 
             }
             @Override
@@ -162,13 +218,14 @@ public class AddEditTaskActivity extends AppCompatActivity {
                 int day = cldr.get(Calendar.DAY_OF_MONTH);
                 int month = cldr.get(Calendar.MONTH);
                 int year = cldr.get(Calendar.YEAR);
+
                 // date picker dialog
                 DatePickerDialog datePickerDialog = new DatePickerDialog(AddEditTaskActivity.this,
                         new DatePickerDialog.OnDateSetListener() {
                             @Override
                             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                                 taskDate.setBackground(null);
-                                String date = dayOfMonth + "/" + (monthOfYear + 1) + "/" + year ;
+                                String date = year + "-" + (monthOfYear + 1) + "-" + dayOfMonth ;
                                 taskDate.setText(date);
                             }
                         }, year, month, day);
@@ -180,7 +237,7 @@ public class AddEditTaskActivity extends AppCompatActivity {
             mTaskId = savedInstanceState.getInt(INSTANCE_TASK_ID, DEFAULT_TASK_ID);
         }
 
-        Intent intent = getIntent();
+        final Intent intent = getIntent();
         if (intent != null && intent.hasExtra(EXTRA_TASK_ID)) {
             btnOK.setText("Update");
             if (mTaskId == DEFAULT_TASK_ID) {
@@ -204,10 +261,22 @@ public class AddEditTaskActivity extends AppCompatActivity {
             addEditTaskViewModel = new ViewModelProvider(this, factory).get(AddEditTaskViewModel.class);
         }
 
+        taskTitle.addTextChangedListener(taskInputValidation);
+        taskDescription.addTextChangedListener(taskInputValidation);
+        taskDate.addTextChangedListener(taskInputValidation);
+
         btnOK.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 onSaveButtonClicked();
+            }
+        });
+
+        btnCancle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent1 = new Intent(getApplicationContext(), MainActivity.class);
+                startActivity(intent1);
             }
         });
 

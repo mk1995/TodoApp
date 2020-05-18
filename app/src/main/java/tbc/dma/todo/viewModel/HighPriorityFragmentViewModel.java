@@ -14,18 +14,17 @@ import tbc.dma.todo.model.room.AppDatabase;
 
 public class HighPriorityFragmentViewModel extends AndroidViewModel {
     //repo
-    TodoRepository repository;
+    private TodoRepository repository;
     //data
     private LiveData<List<TodoEntity>> tasks;
-    private final int HIGH_PRIORITY_TASK = 1;
 
     public HighPriorityFragmentViewModel(@NonNull Application application) {
         super(application);
         AppDatabase db = AppDatabase.getInstance(application);
         repository = new TodoRepository(db);
-        tasks = repository.getAllTasks();
+        tasks = repository.getTaskByPriority();
     }
-    public void getTaskByPriority(){
-        repository.getTaskByPriority(HIGH_PRIORITY_TASK);
+    public LiveData<List<TodoEntity>> getTasksList(){
+        return tasks;
     }
 }

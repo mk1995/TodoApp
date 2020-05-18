@@ -7,8 +7,8 @@
     <color name="colorSearchText">#060607</color>
     <color name="colorMainActivityBG">#FFFFFF</color>
 
-    <color name="colorHighPriority">#FF0000</color>
+    <color name="colorHighPriority">#B30000</color>
     <color name="colorMediumPriority">#1A1ADD</color>
-    <color name="colorLowPriority">#30F13D</color>
+    <color name="colorLowPriority">#009A0A</color>
 
 </resources>
