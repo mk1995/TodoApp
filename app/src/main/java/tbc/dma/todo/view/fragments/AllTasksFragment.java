@@ -87,10 +87,11 @@ public class AllTasksFragment extends Fragment implements RecyclerViewTaskListAd
                 // Here is where you'll implement swipe to delete
                 if (swipeDir == ItemTouchHelper.RIGHT){
                     onItemClick(todoList.get(position));
-                    Toast.makeText(getActivity(), "Swiped From Left to Right", Toast.LENGTH_LONG).show();
                 }else{
-                    Toast.makeText(getActivity(), "Swiped from Right to Left", Toast.LENGTH_LONG).show();
-                    //allTasksFragmentViewModel.deleteTask(todoList.get(position));
+                    allTasksFragmentViewModel.deleteTask(todoList.get(position));
+                    Toast toast = Toast.makeText(getActivity(), " \" "+ todoList.get(position).getTaskTitle() +" \""+" deleted successfully.  ", Toast.LENGTH_LONG);
+                    toast.getView().setBackgroundColor(Color.RED);
+                    toast.show();
                 }
             }
 

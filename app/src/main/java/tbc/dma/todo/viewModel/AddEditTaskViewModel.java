@@ -30,12 +30,10 @@ public class AddEditTaskViewModel extends AndroidViewModel {
 
     public void insertTask(TodoEntity task){
         todoRepository.insertTask(task);
-        Toast.makeText(getApplication(), "Data Inserted Succesfully", Toast.LENGTH_LONG).show();
     }
 
     public void updateTask(TodoEntity task)
     {
         todoRepository.updateTask(task);
-        Toast.makeText(getApplication(), "Data Updated Succesfully", Toast.LENGTH_LONG).show();
     }
 }

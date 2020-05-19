@@ -2,6 +2,7 @@ package tbc.dma.todo.view.activity;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -94,40 +95,30 @@ public class AddEditTaskActivity extends AppCompatActivity {
      */
     public void onSaveButtonClicked() {
         try {
+
             String title = taskTitle.getText().toString();
             String description = taskDescription.getText().toString();
             int priority = getPriorityFromViews();
             String date = taskDate.getText().toString();
-            /*String toastMsg = null;
-            if(title.isEmpty() || description.isEmpty() || date.isEmpty()){
-                if(title.isEmpty()){
-                     toastMsg = "Please enter Task title.";
-                     taskTitle.isFocusable();
-                }
-                if(description.isEmpty()){
-                    toastMsg = "Please enter Task Description.";
-                }
-                if(date.isEmpty()){
-                    toastMsg = "Please select Task date.";
-                }
-                Toast toast = Toast.makeText(getApplicationContext(), toastMsg, Toast.LENGTH_LONG);
-                toast.setGravity(Gravity.CENTER|Gravity.CENTER_HORIZONTAL, 0, 0);
-                toast.show();*/
-/*            }
-            else{*/
-                Date sqlDate = new Date(new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(date).getTime());
-                TodoEntity todo = new TodoEntity(title, description, priority, sqlDate);
-                if(mTaskId == DEFAULT_TASK_ID)
-                    addEditTaskViewModel.insertTask(todo);
-                else {
-                    todo.setTaskID(mTaskId);
-                    addEditTaskViewModel.updateTask(todo);
-                }
-            //}
+            Date sqlDate = new Date(new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(date).getTime());
+            TodoEntity todo = new TodoEntity(title, description, priority, sqlDate);
+            if(mTaskId == DEFAULT_TASK_ID){
+                addEditTaskViewModel.insertTask(todo);
+                Toast toast = Toast.makeText(getApplicationContext(), " \" "+ title +" \""+" added successfully.  ", Toast.LENGTH_LONG);
+                toast.getView().setBackgroundColor(Color.DKGRAY);
+                toast.show();
+            }
+            else{
+                todo.setTaskID(mTaskId);
+                addEditTaskViewModel.updateTask(todo);
+                Toast toast = Toast.makeText(getApplicationContext(), " \" "+ title +" \""+" updated successfully.  ", Toast.LENGTH_LONG);
+                toast.getView().setBackgroundColor(Color.DKGRAY);
+                toast.show();
+            }
 
         } catch (Exception e) {
             // TODO Auto-generated catch block
-           Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+           Toast.makeText(this, "ExceptionHandling: "+e.getMessage(), Toast.LENGTH_LONG).show();
         }
         finish();
     }

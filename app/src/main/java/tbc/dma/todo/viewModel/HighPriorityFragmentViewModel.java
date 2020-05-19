@@ -27,4 +27,8 @@ public class HighPriorityFragmentViewModel extends AndroidViewModel {
     public LiveData<List<TodoEntity>> getTasksList(){
         return tasks;
     }
+
+    public void deleteTask(TodoEntity task){
+        repository.deleteTask(task);
+    }
 }

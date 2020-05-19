@@ -39,7 +39,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@android:color/primary_text_light"
-            android:hint="Title"/>
+            android:hint="@string/title_rv"/>
 
 
         <!-- TextView that displays the update date -->
@@ -49,7 +49,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@android:color/primary_text_light"
-            android:hint="01/01/2000" />
+            android:hint="@string/date_RV" />
 
     </LinearLayout>
 

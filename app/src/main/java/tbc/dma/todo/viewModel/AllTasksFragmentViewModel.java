@@ -28,4 +28,8 @@ public class AllTasksFragmentViewModel extends AndroidViewModel {
         return tasks;
     }
 
+    public void deleteTask(TodoEntity task){
+        repository.deleteTask(task);
+    }
+
 }

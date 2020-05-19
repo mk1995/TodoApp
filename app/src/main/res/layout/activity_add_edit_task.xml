@@ -2,12 +2,12 @@
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
 <RelativeLayout
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     tools:ignore="MissingDefaultResource">
 
     <LinearLayout
@@ -40,7 +40,7 @@
             android:layout_marginTop="10dp"
             android:textAlignment="textStart"
             android:background="@android:color/white"
-            android:hint="Title"
+            android:hint="@string/title"
             android:layout_gravity="start"
             android:inputType="text"
             android:autofillHints="Enter Task Title"
@@ -53,9 +53,9 @@
             android:lines="5"
             android:background="@android:color/white"
             android:padding="20dp"
-            android:hint="Description"
+            android:hint="@string/description"
             android:gravity="start"
-            android:textAlignment="textStart" />
+            android:textAlignment="textStart"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -69,11 +69,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:padding="20dp"
-                android:text="Select Priority" />
+                android:text="@string/select_priority" />
 
             <Spinner
                 android:id="@+id/spinnerAddEditTaskPriority"
                 android:layout_width="fill_parent"
+                android:layout_marginStart="80dp"
                 android:layout_height="match_parent"
                 android:background="@android:drawable/btn_dropdown"
                 android:padding="20dp"
@@ -91,17 +92,17 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:padding="20dp"
-                android:text="Pick Date" />
+                android:text="@string/pick_date" />
 
             <TextView
                 android:id="@+id/textViewAddEditTaskDate"
                 android:layout_width="fill_parent"
-                android:layout_marginStart="15dp"
                 android:layout_height="wrap_content"
                 android:background="@android:drawable/ic_menu_my_calendar"
                 android:clickable="true"
                 android:textColor="@android:color/black"
-                android:textSize="16dp"
+                android:textSize="20sp"
+                android:layout_marginStart="120dp"
                 android:padding="20dp"
                 android:textAlignment="textStart"
                 android:focusable="true"
@@ -124,14 +125,16 @@
                 android:layout_width="wrap_content"
                 android:layout_marginEnd="20dp"
                 android:layout_height="match_parent"
-                android:text="Cancle">
+                android:text="@string/cancle"
+                tools:ignore="ButtonStyle">
             </Button>
             <Button
                 android:id="@+id/buttonAddEditTaskOK"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:text="OK"
-                android:enabled="false">
+                android:text="@string/ok"
+                android:enabled="false"
+                tools:ignore="ButtonStyle">
             </Button>
         </LinearLayout>
     </LinearLayout>
