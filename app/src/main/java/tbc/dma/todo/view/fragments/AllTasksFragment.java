@@ -19,12 +19,15 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.widget.SearchView;
 import android.widget.Toast;
 
 import java.util.List;
-import java.util.Objects;
 
 import tbc.dma.todo.R;
 import tbc.dma.todo.adapter.RecyclerViewTaskListAdapter;
@@ -36,7 +39,7 @@ import tbc.dma.todo.viewModel.AllTasksFragmentViewModel;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class AllTasksFragment extends Fragment implements RecyclerViewTaskListAdapter.OnItemClickListener {
+public class AllTasksFragment extends Fragment implements RecyclerViewTaskListAdapter.OnItemClickListener  {
     // Member variables for the adapter and RecyclerView
     private RecyclerView mRecyclerView;
     private RecyclerViewTaskListAdapter mAdapter;
@@ -68,9 +71,10 @@ public class AllTasksFragment extends Fragment implements RecyclerViewTaskListAd
         DividerItemDecoration decoration = new DividerItemDecoration(container.getContext(), DividerItemDecoration.VERTICAL);
         mRecyclerView.addItemDecoration(decoration);
 
-               /*
-         Add a touch helper to the RecyclerView to recognize when a user swipes to delete an item.
-         An ItemTouchHelper enables touch behavior (like swipe and move) on each ViewHolder,
+
+        /**
+         * Add a touch helper to the RecyclerView to recognize when a user swipes to delete an item.
+         * An ItemTouchHelper enables touch behavior (like swipe and move) on each ViewHolder,
          and uses callbacks to signal when a user is performing these actions.
          */
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
@@ -79,23 +83,33 @@ public class AllTasksFragment extends Fragment implements RecyclerViewTaskListAd
                 return false;
             }
 
-            // Called when a user swipes left or right on a ViewHolder
+            /**
+             * Called when a user swipes left or right on a ViewHolder
+             * Row is swiped from recycler view
+             * */
+
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
                 int position = viewHolder.getAdapterPosition();
                 List<TodoEntity> todoList = mAdapter.getTasks();
-                // Here is where you'll implement swipe to delete
+                /*swipe to edit the task list*/
                 if (swipeDir == ItemTouchHelper.RIGHT){
                     onItemClick(todoList.get(position));
                 }else{
+                    /**
+                    * swipe to delete
+                    * remove it from adapter
+                    * */
                     allTasksFragmentViewModel.deleteTask(todoList.get(position));
                     Toast toast = Toast.makeText(getActivity(), " \" "+ todoList.get(position).getTaskTitle() +" \""+" deleted successfully.  ", Toast.LENGTH_LONG);
                     toast.getView().setBackgroundColor(Color.RED);
                     toast.show();
                 }
             }
-
-            //to customize how RecyclerView's item respond to user interactions like edit/delete while swiping
+            /**
+             * the foreground view is changed while user is swiping the view.
+             *  to customize how RecyclerView's item respond to user interactions like edit/delete while swiping
+             */
             @Override
             public void onChildDraw(@NonNull Canvas c, @NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
                 Bitmap icon;
@@ -110,7 +124,7 @@ public class AllTasksFragment extends Fragment implements RecyclerViewTaskListAd
                         RectF background = new RectF((float) itemView.getLeft(), (float) itemView.getTop(), dX,(float) itemView.getBottom());
                         c.drawRect(background,p);
                         icon = BitmapFactory.decodeResource(getResources(), R.drawable.edit_icon);
-                        RectF icon_dest = new RectF((float) itemView.getLeft() + width ,(float) itemView.getTop() + width,(float) itemView.getLeft()+ 2*width,(float)itemView.getBottom() - width);
+                        RectF icon_dest = new RectF((float) itemView.getLeft() + width ,(float) itemView.getTop() + width,(float) itemView.getLeft() + 2*width,(float)itemView.getBottom() - width);
                         c.drawBitmap(icon,null,icon_dest,p);
                     } else {
                         p.setColor(Color.parseColor("#FFFFFF"));
@@ -124,7 +138,7 @@ public class AllTasksFragment extends Fragment implements RecyclerViewTaskListAd
                 super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
             }
 
-
+        // attaching the touch helper to recycler view
         }).attachToRecyclerView(mRecyclerView);
 
         allTasksFragmentViewModel.getTasks().observe(requireActivity(), new Observer<List<TodoEntity>>() {
@@ -133,9 +147,7 @@ public class AllTasksFragment extends Fragment implements RecyclerViewTaskListAd
                 mAdapter.setTasks(taskEntries);
             }
         });
-
         mAdapter.setOnTaskClickListener(this);
-
         return view;
     }
 

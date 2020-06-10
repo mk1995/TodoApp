@@ -19,6 +19,10 @@ public class TodoRepository {
         return dao.loadAllTasks();
     }
 
+    public List<TodoEntity> getAllTasksList(){
+        return dao.getAllTasksList();
+    }
+
     public LiveData<TodoEntity> getTaskById(int taskId){
         return dao.loadTaskById(taskId);
     }

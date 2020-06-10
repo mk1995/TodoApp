@@ -25,6 +25,7 @@ import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
+import java.util.Objects;
 
 import tbc.dma.todo.R;
 import tbc.dma.todo.model.entity.TodoEntity;
@@ -100,7 +101,7 @@ public class AddEditTaskActivity extends AppCompatActivity {
             String description = taskDescription.getText().toString();
             int priority = getPriorityFromViews();
             String date = taskDate.getText().toString();
-            Date sqlDate = new Date(new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(date).getTime());
+            Date sqlDate = new Date(Objects.requireNonNull(new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(date)).getTime());
             TodoEntity todo = new TodoEntity(title, description, priority, sqlDate);
             if(mTaskId == DEFAULT_TASK_ID){
                 addEditTaskViewModel.insertTask(todo);
@@ -176,6 +177,7 @@ public class AddEditTaskActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_edit_task);
+
         /*Initialise the views*/
         initViews();
 
@@ -192,7 +194,7 @@ public class AddEditTaskActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent, View view,
                                        int position, long id) {
                 taskPriorityValue = taskPriority.getSelectedItem().toString();
-                //Toast.makeText(getApplicationContext(), taskPriorityValue, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), taskPriorityValue, Toast.LENGTH_SHORT).show();
 
             }
             @Override

@@ -18,13 +18,16 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
     public ViewPagerAdapter(@NonNull FragmentManager fm, int behavior) {
         super(fm, behavior);
     }
+    public void AddFragment(Fragment fm, String title){
+        lstFragments.add(fm);
+        lstTitles.add(title);
+    }
 
     @Nullable
     @Override
     public CharSequence getPageTitle(int position) {
         return lstTitles.get(position);
     }
-
     @NonNull
     @Override
     public Fragment getItem(int position) {
@@ -33,11 +36,8 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        return lstTitles.size();
+        return lstFragments.size();
     }
 
-    public void AddFragment(Fragment fm, String title){
-        lstFragments.add(fm);
-        lstTitles.add(title);
-    }
+
 }
