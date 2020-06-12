@@ -99,7 +99,7 @@ public class RecyclerViewTaskListAdapter extends RecyclerView.Adapter<RecyclerVi
 
         public void bindViews(int pos)
         {
-            TodoEntity taskEntry = tasks.get(pos);
+            TodoEntity taskEntry = filteredTasks.get(pos);
 
             taskTitleView.setText(taskEntry.getTaskTitle());
 
@@ -131,7 +131,7 @@ public class RecyclerViewTaskListAdapter extends RecyclerView.Adapter<RecyclerVi
         if (tasks == null) {
             return 0;
         }
-        return tasks.size();
+        return filteredTasks.size();
     }
 
     public interface OnItemClickListener
@@ -150,14 +150,13 @@ public class RecyclerViewTaskListAdapter extends RecyclerView.Adapter<RecyclerVi
         return new Filter() {
             @Override
             protected FilterResults performFiltering(CharSequence constraint) {
-                List<TodoEntity> filteredTaskList = new ArrayList<>();
                 String searchString = constraint.toString().toLowerCase().trim();
                 if(searchString.isEmpty() || searchString.length() == 0){
                     filteredTasks = tasks;
                 }else{
+                    List<TodoEntity> filteredTaskList = new ArrayList<>();
                     //debug::tasks null
                     for (TodoEntity t : tasks){
-                        Log.d("Search", "Task Title: "+t.getTaskTitle());
                         if (t.getTaskTitle().toLowerCase().contains(searchString)
 
                                 || t.getTaskDescription().toLowerCase().contains(searchString)) {
@@ -165,7 +164,7 @@ public class RecyclerViewTaskListAdapter extends RecyclerView.Adapter<RecyclerVi
                         }
                     }
                     filteredTasks = filteredTaskList;
-                    Log.d("Search", "FilteredTaskListCOunt: "+String.valueOf(filteredTaskList.size()));
+                    Log.d("Search", "FilteredTaskListCount for "+ searchString +": "+ + filteredTaskList.size());
                 }
                 FilterResults filterResults = new FilterResults();
                 filterResults.values = filteredTasks;
@@ -176,6 +175,7 @@ public class RecyclerViewTaskListAdapter extends RecyclerView.Adapter<RecyclerVi
             protected void publishResults(CharSequence constraint, FilterResults results) {
                 //
                 filteredTasks = (List<TodoEntity>) results.values;
+                Log.d("Search", "PublishResultSize: "+ filteredTasks.size() + filteredTasks.get(0));
                 notifyDataSetChanged();
             }
         };

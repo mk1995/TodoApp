@@ -17,7 +17,6 @@ public class AddEditTaskViewModel extends AndroidViewModel {
 
     private TodoRepository  todoRepository;
     private LiveData<TodoEntity> tasks;
-    private List<TodoEntity> taskList;
 
     public AddEditTaskViewModel(@NonNull Application application, int taskID) {
         super(application);
@@ -26,11 +25,6 @@ public class AddEditTaskViewModel extends AndroidViewModel {
         if(taskID != -1){
             tasks = todoRepository.getTaskById(taskID);
         }
-        taskList = todoRepository.getAllTasksList();
-    }
-
-    public List<TodoEntity> getAllTasksList(){
-        return taskList;
     }
 
     public LiveData<TodoEntity> getTask(){

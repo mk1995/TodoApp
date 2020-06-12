@@ -12,6 +12,7 @@ import android.widget.SearchView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.LifecycleObserver;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.ViewPager;
 
@@ -29,6 +30,7 @@ import tbc.dma.todo.view.fragments.HighPriorityFragment;
 import tbc.dma.todo.viewModel.AddEditTaskViewModel;
 import tbc.dma.todo.viewModel.AddEditTaskViewModelFactory;
 import tbc.dma.todo.viewModel.AllTasksFragmentViewModel;
+import tbc.dma.todo.viewModel.MainActivityViewModel;
 
 public class MainActivity extends AppCompatActivity implements LifecycleObserver {
     private TabLayout tabLayout;
@@ -36,7 +38,7 @@ public class MainActivity extends AppCompatActivity implements LifecycleObserver
     private FloatingActionButton fabButton;
     private SearchView searchView;
     private RecyclerViewTaskListAdapter mAdapter;
-    private AddEditTaskViewModel addEditTaskViewModel;
+    private MainActivityViewModel mainActivityViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,19 +52,17 @@ public class MainActivity extends AppCompatActivity implements LifecycleObserver
 
 
         mAdapter = new RecyclerViewTaskListAdapter(getApplication());
-        Log.d("TASKLIST", "Entering New Thread");
-        new Thread(new Runnable() {
+        mainActivityViewModel = new ViewModelProvider(MainActivity.this).get(MainActivityViewModel.class);
+        mainActivityViewModel.getAllTaskList().observe(this, new Observer<List<TodoEntity>>() {
             @Override
-            public void run() {
-                Log.d("TASKLIST", "Inside new Thread");
-                AddEditTaskViewModelFactory factory = new AddEditTaskViewModelFactory(getApplication(), -1);
-                addEditTaskViewModel = new ViewModelProvider(MainActivity.this, factory).get(AddEditTaskViewModel.class);
-                List<TodoEntity> tasksLists = addEditTaskViewModel.getAllTasksList();
-                Log.d("TASKLIST", "TotalListCount: "+tasksLists.size());
-                mAdapter.setTasks(tasksLists);
+            public void onChanged(List<TodoEntity> todoEntities) {
+                mAdapter.setTasks(todoEntities);
                 mAdapter.notifyDataSetChanged();
+                Log.d("TASKLIST", "TotalListCount: "+todoEntities.size());
             }
-        }).start();
+        });
+
+
 
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager(), 1);
         adapter.AddFragment(new AllTasksFragment(), "");
@@ -113,7 +113,7 @@ public class MainActivity extends AppCompatActivity implements LifecycleObserver
             public boolean onQueryTextChange(String newText) {
                 mAdapter.getFilter().filter(newText);
                 Log.d("Search", "Filter onQueryTextChange");
-                return true;
+                return false;
             }
         });
         return true;
