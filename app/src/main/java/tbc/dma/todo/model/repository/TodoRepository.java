@@ -19,6 +19,7 @@ public class TodoRepository {
         return dao.loadAllTasks();
     }
 
+    //Bug:  IllegalStateException: Cannot access database on the main thread
     public List<TodoEntity> getAllTasksList(){
         return dao.getAllTasksList();
     }

@@ -7,6 +7,8 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
+import java.util.List;
+
 import tbc.dma.todo.model.entity.TodoEntity;
 import tbc.dma.todo.model.repository.TodoRepository;
 import tbc.dma.todo.model.room.AppDatabase;
@@ -15,13 +17,20 @@ public class AddEditTaskViewModel extends AndroidViewModel {
 
     private TodoRepository  todoRepository;
     private LiveData<TodoEntity> tasks;
+    private List<TodoEntity> taskList;
 
     public AddEditTaskViewModel(@NonNull Application application, int taskID) {
         super(application);
         AppDatabase db = AppDatabase.getInstance(application);
         todoRepository = new TodoRepository(db);
-        if(taskID != -1)
+        if(taskID != -1){
             tasks = todoRepository.getTaskById(taskID);
+        }
+        taskList = todoRepository.getAllTasksList();
+    }
+
+    public List<TodoEntity> getAllTasksList(){
+        return taskList;
     }
 
     public LiveData<TodoEntity> getTask(){

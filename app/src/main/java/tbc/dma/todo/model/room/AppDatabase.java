@@ -21,8 +21,8 @@ public abstract class AppDatabase extends RoomDatabase {
 
     private static final Object LOCK = new Object();
     private static String DATABASE_NAME = "TodoApp";
-    private static final ExecutorService databaseWriteExecutor = Executors.newFixedThreadPool(3);
 
+    private static final ExecutorService databaseWriteExecutor = Executors.newFixedThreadPool(3);
     public static ExecutorService getDatabaseWriteExecutor() {
         return databaseWriteExecutor;
     }
@@ -33,13 +33,13 @@ public abstract class AppDatabase extends RoomDatabase {
     public static AppDatabase getInstance(Context context){
         if(sInstance == null){
             synchronized (LOCK){
-                Log.d(LOG_TAG, "Creating a new database instance");
+                //Log.d(LOG_TAG, "Creating a new database instance");
                 sInstance = Room.databaseBuilder(context.getApplicationContext(),
                         AppDatabase.class, AppDatabase.DATABASE_NAME)
                         .build();
             }
         }
-        Log.d(LOG_TAG, "Getting the database instance");
+        //Log.d(LOG_TAG, "Getting the database instance");
         return sInstance;
     }
 }

@@ -2,6 +2,7 @@ package tbc.dma.todo.adapter;
 
 import android.content.Context;
 import android.graphics.drawable.GradientDrawable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -154,13 +155,17 @@ public class RecyclerViewTaskListAdapter extends RecyclerView.Adapter<RecyclerVi
                 if(searchString.isEmpty() || searchString.length() == 0){
                     filteredTasks = tasks;
                 }else{
+                    //debug::tasks null
                     for (TodoEntity t : tasks){
+                        Log.d("Search", "Task Title: "+t.getTaskTitle());
                         if (t.getTaskTitle().toLowerCase().contains(searchString)
+
                                 || t.getTaskDescription().toLowerCase().contains(searchString)) {
                             filteredTaskList.add(t);
                         }
                     }
                     filteredTasks = filteredTaskList;
+                    Log.d("Search", "FilteredTaskListCOunt: "+String.valueOf(filteredTaskList.size()));
                 }
                 FilterResults filterResults = new FilterResults();
                 filterResults.values = filteredTasks;
@@ -169,6 +174,7 @@ public class RecyclerViewTaskListAdapter extends RecyclerView.Adapter<RecyclerVi
 
             @Override
             protected void publishResults(CharSequence constraint, FilterResults results) {
+                //
                 filteredTasks = (List<TodoEntity>) results.values;
                 notifyDataSetChanged();
             }

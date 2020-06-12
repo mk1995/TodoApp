@@ -1,49 +1,33 @@
 package tbc.dma.todo.view.activity;
 
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
-import android.widget.EditText;
 import android.widget.SearchView;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.Lifecycle;
-import androidx.lifecycle.LifecycleEventObserver;
 import androidx.lifecycle.LifecycleObserver;
-import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.OnLifecycleEvent;
-import androidx.room.DatabaseConfiguration;
-import androidx.room.InvalidationTracker;
-import androidx.sqlite.db.SupportSQLiteOpenHelper;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 
-import org.w3c.dom.Text;
-
-import java.util.Arrays;
 import java.util.List;
 
 import tbc.dma.todo.R;
 import tbc.dma.todo.adapter.RecyclerViewTaskListAdapter;
 import tbc.dma.todo.adapter.ViewPagerAdapter;
-import tbc.dma.todo.model.dao.TodoDao;
 import tbc.dma.todo.model.entity.TodoEntity;
-import tbc.dma.todo.model.repository.TodoRepository;
-import tbc.dma.todo.model.room.AppDatabase;
 import tbc.dma.todo.view.fragments.AllTasksFragment;
 import tbc.dma.todo.view.fragments.HighPriorityFragment;
+import tbc.dma.todo.viewModel.AddEditTaskViewModel;
+import tbc.dma.todo.viewModel.AddEditTaskViewModelFactory;
 import tbc.dma.todo.viewModel.AllTasksFragmentViewModel;
 
 public class MainActivity extends AppCompatActivity implements LifecycleObserver {
@@ -52,6 +36,7 @@ public class MainActivity extends AppCompatActivity implements LifecycleObserver
     private FloatingActionButton fabButton;
     private SearchView searchView;
     private RecyclerViewTaskListAdapter mAdapter;
+    private AddEditTaskViewModel addEditTaskViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,16 +47,22 @@ public class MainActivity extends AppCompatActivity implements LifecycleObserver
         viewPager = findViewById(R.id.viewPager);
         fabButton = findViewById(R.id.fab);
 
+
+
         mAdapter = new RecyclerViewTaskListAdapter(getApplication());
+        Log.d("TASKLIST", "Entering New Thread");
         new Thread(new Runnable() {
             @Override
             public void run() {
-                AllTasksFragmentViewModel allTasksFragmentViewModel = new AllTasksFragmentViewModel(getApplication());
-                List<TodoEntity> tasksLists = allTasksFragmentViewModel.getAllTasksList();
+                Log.d("TASKLIST", "Inside new Thread");
+                AddEditTaskViewModelFactory factory = new AddEditTaskViewModelFactory(getApplication(), -1);
+                addEditTaskViewModel = new ViewModelProvider(MainActivity.this, factory).get(AddEditTaskViewModel.class);
+                List<TodoEntity> tasksLists = addEditTaskViewModel.getAllTasksList();
+                Log.d("TASKLIST", "TotalListCount: "+tasksLists.size());
                 mAdapter.setTasks(tasksLists);
                 mAdapter.notifyDataSetChanged();
             }
-        });
+        }).start();
 
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager(), 1);
         adapter.AddFragment(new AllTasksFragment(), "");
@@ -112,14 +103,17 @@ public class MainActivity extends AppCompatActivity implements LifecycleObserver
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+                Log.d("Search", "Inside onQueryTextSubmit");
                 mAdapter.getFilter().filter(query);
+                Log.d("Search", "Filter onQueryTextSubmit");
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
                 mAdapter.getFilter().filter(newText);
-                return false;
+                Log.d("Search", "Filter onQueryTextChange");
+                return true;
             }
         });
         return true;

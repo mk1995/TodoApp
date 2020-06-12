@@ -237,8 +237,9 @@ public class AddEditTaskActivity extends AppCompatActivity {
                 // populate the UI
 
                 mTaskId = intent.getIntExtra(EXTRA_TASK_ID, DEFAULT_TASK_ID);
+
                 AddEditTaskViewModelFactory factory = new AddEditTaskViewModelFactory(getApplication(), mTaskId);
-                addEditTaskViewModel = new ViewModelProvider(this, factory).get(AddEditTaskViewModel.class);
+                addEditTaskViewModel = new ViewModelProvider(AddEditTaskActivity.this, factory).get(AddEditTaskViewModel.class);
 
                 addEditTaskViewModel.getTask().observe(this, new Observer<TodoEntity>() {
                     @Override
