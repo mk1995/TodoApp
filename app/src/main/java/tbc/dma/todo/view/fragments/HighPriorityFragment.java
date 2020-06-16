@@ -8,23 +8,25 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.ItemTouchHelper;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Toast;
-
 import java.util.List;
+import java.util.Objects;
 
+import tbc.dma.todo.helperCLasses.FragmentHelper;
+import tbc.dma.todo.helperCLasses.SearchViewHelper;
 import tbc.dma.todo.R;
 import tbc.dma.todo.adapter.RecyclerViewTaskListAdapter;
 import tbc.dma.todo.model.entity.TodoEntity;
@@ -32,51 +34,39 @@ import tbc.dma.todo.view.activity.AddEditTaskActivity;
 import tbc.dma.todo.viewModel.HighPriorityFragmentViewModel;
 
 public class HighPriorityFragment extends Fragment implements RecyclerViewTaskListAdapter.OnItemClickListener {
-    // Member variables for the adapter and RecyclerView
-    private RecyclerView mRecyclerView;
     private RecyclerViewTaskListAdapter mAdapter;
     HighPriorityFragmentViewModel highPriorityFragmentViewModel;
-    private Paint p = new Paint();
+    private Paint p;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_all_tasks, container, false);
+        setHasOptionsMenu(true);
+
         highPriorityFragmentViewModel = new ViewModelProvider(this).get(HighPriorityFragmentViewModel.class);
 
         // 1. get a reference to recyclerView
-        mRecyclerView = view.findViewById(R.id.recyclerViewAllTasksList);
+        // Member variables for the adapter and RecyclerView
+        RecyclerView mRecyclerView = view.findViewById(R.id.recyclerViewAllTasksList);
 
-        // use this setting to improve performance if you know that changes
-        // in content do not change the layout size of the RecyclerView
-        mRecyclerView.setHasFixedSize(true);
+        FragmentHelper fragmentHelper = new FragmentHelper(mRecyclerView, container);
+        mAdapter = fragmentHelper.initRVHelper();
 
-        // 2. set layoutManger
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        // 3. create an adapter
-        mAdapter = new RecyclerViewTaskListAdapter(getActivity());
-
-        // 4. set adapter
-        mRecyclerView.setAdapter(mAdapter);
-
-        DividerItemDecoration decoration = new DividerItemDecoration(container.getContext(), DividerItemDecoration.VERTICAL);
-        mRecyclerView.addItemDecoration(decoration);
-
-               /*
-         Add a touch helper to the RecyclerView to recognize when a user swipes to delete an item.
-         An ItemTouchHelper enables touch behavior (like swipe and move) on each ViewHolder,
-         and uses callbacks to signal when a user is performing these actions.
+        /**
+         *Add a touch helper to the RecyclerView to recognize when a user swipes to delete an item.
+         *An ItemTouchHelper enables touch behavior (like swipe and move) on each ViewHolder, and uses callbacks to signal when a user is performing these actions.
          */
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
             @Override
-            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
                 return false;
             }
 
             // Called when a user swipes left or right on a ViewHolder
             @Override
-            public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int swipeDir) {
                 int position = viewHolder.getAdapterPosition();
                 List<TodoEntity> todoList = mAdapter.getTasks();
                 // Here is where you'll implement swipe to delete
@@ -95,7 +85,7 @@ public class HighPriorityFragment extends Fragment implements RecyclerViewTaskLi
             public void onChildDraw(@NonNull Canvas c, @NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
                 Bitmap icon;
                 if(actionState == ItemTouchHelper.ACTION_STATE_SWIPE){
-
+                    p = new Paint();
                     View itemView = viewHolder.itemView;
                     float height = (float) itemView.getBottom() - (float) itemView.getTop();
                     float width = height / 3;
@@ -121,14 +111,14 @@ public class HighPriorityFragment extends Fragment implements RecyclerViewTaskLi
 
 
         }).attachToRecyclerView(mRecyclerView);
+
         // refreshing recycler view
         mAdapter.notifyDataSetChanged();
 
-        highPriorityFragmentViewModel.getTasksList().observe(getActivity(), new Observer<List<TodoEntity>>() {
+        highPriorityFragmentViewModel.getTasksList().observe(Objects.requireNonNull(requireActivity(), "LifecycleOwner is null"), new Observer<List<TodoEntity>>() {
             @Override
             public void onChanged(List<TodoEntity> taskEntries) {
                 mAdapter.setTasks(taskEntries);
-                mAdapter.notifyDataSetChanged();
             }
         });
 
@@ -136,12 +126,16 @@ public class HighPriorityFragment extends Fragment implements RecyclerViewTaskLi
 
         return view;
     }
-
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        new SearchViewHelper(menu, inflater, mAdapter);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
     @Override
     public void onItemClick(TodoEntity todoEntity) {
         // Launch AddTaskActivity adding the itemId as an extra in the intent
         Intent intent = new Intent(getActivity(), AddEditTaskActivity.class);
-        intent.putExtra(AddEditTaskActivity.EXTRA_TASK_ID, todoEntity.getTaskID());
+        intent.putExtra(AddEditTaskActivity.UPDATE_MODE, todoEntity.getTaskID());
         startActivity(intent);
     }
 }

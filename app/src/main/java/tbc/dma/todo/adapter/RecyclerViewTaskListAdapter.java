@@ -6,7 +6,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
@@ -29,7 +28,11 @@ public class RecyclerViewTaskListAdapter extends RecyclerView.Adapter<RecyclerVi
 
     // Member variable to handle item clicks
     private OnItemClickListener mItemClickListener;
-    private Context mContext;
+
+    //    abstract class which allows access to application-specific resources and classes,
+    //    as well as up-calls for application-level operations, such as launching activities,
+    //    broadcasting and receiving intents, etc
+    private final Context mContext;
 
     public RecyclerViewTaskListAdapter(Context cntx) {
         mContext = cntx;
@@ -72,18 +75,17 @@ public class RecyclerViewTaskListAdapter extends RecyclerView.Adapter<RecyclerVi
     }
 
      public class ViewHolder extends RecyclerView.ViewHolder{
-        private TextView taskTitleView;
-        private TextView dateView;
-        private TextView priorityView;
-        private EditText searchEditText;
+        private final TextView taskTitleView;
+        private final TextView dateView;
+        private final TextView priorityView;
+        private final TextView description;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             taskTitleView = itemView.findViewById(R.id.taskRVTitle);
             dateView = itemView.findViewById(R.id.taskRVDate);
             priorityView = itemView.findViewById(R.id.taskRVPriority);
-            searchEditText = itemView.findViewById(R.id.search_input);
-
+            description = itemView.findViewById(R.id.textViewDescription);
             //when task list item is clicked
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -96,18 +98,27 @@ public class RecyclerViewTaskListAdapter extends RecyclerView.Adapter<RecyclerVi
             });
         }
 
-
+//method to bind the views
         public void bindViews(int pos)
         {
+
             TodoEntity taskEntry = filteredTasks.get(pos);
 
             taskTitleView.setText(taskEntry.getTaskTitle());
+            String descriptionText = "";
+            if(taskEntry.getTaskDescription().length() > 30){
+                descriptionText = taskEntry.getTaskDescription().substring(0, 28)+" ...";
+            }else{
+                descriptionText = taskEntry.getTaskDescription();
+            }
 
             int priority = taskEntry.getTaskPriority();
             int priorityColor = getPriorityColor(priority);
 
             GradientDrawable priorityCircle = (GradientDrawable) priorityView.getBackground();
             priorityCircle.setColor(priorityColor);
+
+            description.setText(descriptionText);
 
             dateView.setText(taskEntry.getTaskDate().toString());
 
@@ -128,7 +139,7 @@ public class RecyclerViewTaskListAdapter extends RecyclerView.Adapter<RecyclerVi
 
     @Override
     public int getItemCount() {
-        if (tasks == null) {
+        if (filteredTasks == null) {
             return 0;
         }
         return filteredTasks.size();
@@ -144,18 +155,17 @@ public class RecyclerViewTaskListAdapter extends RecyclerView.Adapter<RecyclerVi
         this.mItemClickListener = mItemClickListener;
     }
 
-
     @Override
     public Filter getFilter() {
         return new Filter() {
             @Override
             protected FilterResults performFiltering(CharSequence constraint) {
                 String searchString = constraint.toString().toLowerCase().trim();
-                if(searchString.isEmpty() || searchString.length() == 0){
+                if(searchString.isEmpty()){
                     filteredTasks = tasks;
                 }else{
                     List<TodoEntity> filteredTaskList = new ArrayList<>();
-                    //debug::tasks null
+                    Log.d("DBUGX", "not null: "+searchString.length());
                     for (TodoEntity t : tasks){
                         if (t.getTaskTitle().toLowerCase().contains(searchString)
 
@@ -170,12 +180,11 @@ public class RecyclerViewTaskListAdapter extends RecyclerView.Adapter<RecyclerVi
                 filterResults.values = filteredTasks;
                 return filterResults;
             }
-
+            @SuppressWarnings("unchecked")
             @Override
             protected void publishResults(CharSequence constraint, FilterResults results) {
-                //
-                filteredTasks = (List<TodoEntity>) results.values;
-                Log.d("Search", "PublishResultSize: "+ filteredTasks.size() + filteredTasks.get(0));
+                filteredTasks = (ArrayList<TodoEntity>) results.values;
+                Log.d("Search", "PublishResultSize: "+ filteredTasks.size());
                 notifyDataSetChanged();
             }
         };

@@ -12,8 +12,11 @@
     <string name="pick_date">Pick Date</string>
     <string name="cancle">Cancle</string>
     <string name="ok">OK</string>
+    <string name="update">UPDATE</string>
     <string name="title_rv">Title</string>
     <string name="date_RV">01/01/2000</string>
+    <string name="search">Search</string>
+    <string name="priority_color">Priority Color</string>
 
     <!--Priority Array List-->
     <string-array name="priority_array">

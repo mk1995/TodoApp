@@ -7,37 +7,12 @@
     tools:context=".view.activity.MainActivity"
     android:orientation="vertical"
     android:background="@color/colorSearch">
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:background="@drawable/border">
-
-    <EditText
-        android:id="@+id/search_input"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
-        android:singleLine="true"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
-        android:background="@drawable/search_box"
-        android:drawableStart="@drawable/ic_search_black_24dp"
-        android:drawableEnd="@drawable/voice_recog"
-        android:padding="10dp"
-        android:drawablePadding="10dp"
-        android:imeOptions="actionSearch"
-        android:hint="@string/searchText"
-        android:textColor="@color/colorSearchText" />
-</LinearLayout>
-
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tab_main"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="65dp"
+        android:layout_marginTop="5dp"
         app:tabMode="fixed"
         app:tabGravity="fill"
         android:background="@android:color/holo_orange_light"
@@ -47,7 +22,7 @@
 
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/viewPager"
-        android:layout_marginTop="115dp"
+        android:layout_marginTop="60dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
     </androidx.viewpager.widget.ViewPager>

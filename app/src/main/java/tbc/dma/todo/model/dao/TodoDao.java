@@ -17,9 +17,6 @@ public interface TodoDao {
     @Query("select * from tbl_todoapp order by taskDate desc")
     LiveData<List<TodoEntity>> loadAllTasks();
 
-    @Query("select * from tbl_todoapp order by taskDate desc")
-    List<TodoEntity> getAllTasksList();
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertTask(TodoEntity task);
 

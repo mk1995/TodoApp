@@ -71,6 +71,16 @@
                 android:padding="20dp"
                 android:text="@string/select_priority" />
 
+            <TextView
+                android:id="@+id/txtViewSetPriorityColor"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_marginStart="5dp"
+                android:layout_gravity="center"
+                android:background="@drawable/priority_circle"
+                android:gravity="center"
+                android:textAlignment="center"
+                android:textColor="@android:color/white" />
             <Spinner
                 android:id="@+id/spinnerAddEditTaskPriority"
                 android:layout_width="fill_parent"

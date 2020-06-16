@@ -3,10 +3,11 @@ package tbc.dma.todo.view.activity;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.Gravity;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -18,6 +19,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -32,32 +35,29 @@ import tbc.dma.todo.model.entity.TodoEntity;
 import tbc.dma.todo.viewModel.AddEditTaskViewModel;
 import tbc.dma.todo.viewModel.AddEditTaskViewModelFactory;
 
+
+/**
+ *
+ */
 public class AddEditTaskActivity extends AppCompatActivity {
+
+    //TAG NAME
+    public static  final String UPDATE_MODE = null;
+
+    // default task id to be used when not in update mode
+    private static int DEFAULT_TASK_ID = 0;
+
+    //ViewModel
+    AddEditTaskViewModel addEditTaskViewModel;
 
     /*Member variable views*/
     EditText taskTitle;
     EditText taskDescription;
     Spinner taskPriority;
-    String taskPriorityValue;
     TextView taskDate;
-    Button btnCancle;
+    Button banCancel;
     Button btnOK;
-
-    // Extra for the task ID to be received in the intent
-    public static final String EXTRA_TASK_ID = "extraTaskId";
-    // Extra for the task ID to be received after rotation
-    public static final String INSTANCE_TASK_ID = "instanceTaskId";
-    // Constant for default task id to be used when not in update mode
-    private static final int DEFAULT_TASK_ID = -1;
-    private int mTaskId = DEFAULT_TASK_ID;
-
-    // Constants for priority
-    public static final int PRIORITY_HIGH = 1;
-    public static final int PRIORITY_MEDIUM = 2;
-    public static final int PRIORITY_LOW = 3;
-
-    //ViewModel
-    AddEditTaskViewModel addEditTaskViewModel;
+    TextView textViewSetColor;
 
     /**
      * initViews is called from onCreate to initialise the member variable views
@@ -67,12 +67,13 @@ public class AddEditTaskActivity extends AppCompatActivity {
         taskDescription = findViewById(R.id.editTextAddEditTaskDescription);
         taskPriority = findViewById(R.id.spinnerAddEditTaskPriority);
         taskDate = findViewById(R.id.textViewAddEditTaskDate);
-        btnCancle = findViewById(R.id.buttonAddEditTaskCancle);
+        banCancel = findViewById(R.id.buttonAddEditTaskCancle);
         btnOK = findViewById(R.id.buttonAddEditTaskOK);
+        textViewSetColor = findViewById(R.id.txtViewSetPriorityColor);
     }
 
     /*textview validation*/
-    private TextWatcher taskInputValidation = new TextWatcher(){
+    final private TextWatcher taskInputValidation = new TextWatcher(){
 
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -91,55 +92,28 @@ public class AddEditTaskActivity extends AppCompatActivity {
     };
 
     /**
-     * onSaveButtonClicked is called when the "save" button is clicked.
-     * It retrieves user input and inserts that new task data into the underlying database.
-     */
-    public void onSaveButtonClicked() {
-        try {
-
-            String title = taskTitle.getText().toString();
-            String description = taskDescription.getText().toString();
-            int priority = getPriorityFromViews();
-            String date = taskDate.getText().toString();
-            Date sqlDate = new Date(Objects.requireNonNull(new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(date)).getTime());
-            TodoEntity todo = new TodoEntity(title, description, priority, sqlDate);
-            if(mTaskId == DEFAULT_TASK_ID){
-                addEditTaskViewModel.insertTask(todo);
-                Toast toast = Toast.makeText(getApplicationContext(), " \" "+ title +" \""+" added successfully.  ", Toast.LENGTH_LONG);
-                toast.getView().setBackgroundColor(Color.DKGRAY);
-                toast.show();
-            }
-            else{
-                todo.setTaskID(mTaskId);
-                addEditTaskViewModel.updateTask(todo);
-                Toast toast = Toast.makeText(getApplicationContext(), " \" "+ title +" \""+" updated successfully.  ", Toast.LENGTH_LONG);
-                toast.getView().setBackgroundColor(Color.DKGRAY);
-                toast.show();
-            }
-
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-           Toast.makeText(this, "ExceptionHandling: "+e.getMessage(), Toast.LENGTH_LONG).show();
-        }
-        finish();
-    }
-
-    /**
      * getPriority is called whenever the selected priority needs to be retrieved
      */
-    public int getPriorityFromViews() {
-        int priority = 1;
-        switch (taskPriorityValue) {
-            case "High":
-                priority = PRIORITY_HIGH;
+    public int[] getPriorityFromViews(int priorityValue) {
+        int[] returnValues = new int[2];
+        //GradientDrawable drawable = (GradientDrawable) imgViewSetColor.getBackground();
+        int bgColor = -1, indexPosition = 0;
+        switch (priorityValue) {
+            case 1:
+                indexPosition = 0;
+                bgColor = ContextCompat.getColor(this, R.color.colorHighPriority);
                 break;
-            case "Medium":
-                priority = PRIORITY_MEDIUM;
+            case 2:
+                indexPosition = 1;
+                bgColor = ContextCompat.getColor(this, R.color.colorMediumPriority);
                 break;
-            case "Low":
-                priority = PRIORITY_LOW;
+            case 3:
+                indexPosition = 2;
+                bgColor = ContextCompat.getColor(this, R.color.colorLowPriority);
         }
-        return priority;
+        returnValues[0] = indexPosition;
+        returnValues[1] = bgColor;
+        return returnValues;
     }
 
     /**
@@ -151,35 +125,111 @@ public class AddEditTaskActivity extends AppCompatActivity {
         if(task == null){
             return;
         }
-        int indexPositionValue = task.getTaskPriority();
-        int indexPosition = -1;
-        switch (indexPositionValue){
-            case 1:
-            indexPosition =0;
-            break;
-            case 2:
-                indexPosition = 1;
-                break;
-            case 3:
-                indexPosition = 2;
-                break;
-            default:
-                indexPosition = 0;
-        }
+        int[] array =  getPriorityFromViews(task.getTaskPriority());
+        int indexPosition = array[0];
+        int color = array[1];
+
         taskTitle.setText(task.getTaskTitle());
         taskDescription.setText(task.getTaskDescription());
         taskPriority.setSelection(indexPosition);
+
+        setBackgroundPriorityColor(color);
+
         taskDate.setBackground(null);
         taskDate.setText(task.getTaskDate().toString());
     }
 
+    /**
+     * Changing background color based on priority
+     * @param color
+     * int value
+     */
+    private void setBackgroundPriorityColor(int color){
+        GradientDrawable priorityCircle = (GradientDrawable) textViewSetColor.getBackground();
+        priorityCircle.setColor(color);
+    }
+
+    /**
+     * onSaveButtonClicked is called when the "save" button is clicked.
+     * It retrieves user input and inserts that new task data into the underlying database.
+     */
+    public void onSaveButtonClicked() {
+        try {
+
+            String title = taskTitle.getText().toString();
+            String description = taskDescription.getText().toString();
+            int index = taskPriority.getSelectedItemPosition();
+            String date = taskDate.getText().toString();
+            Date sqlDate = new Date(Objects.requireNonNull(new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(date)).getTime());
+            TodoEntity todo = new TodoEntity(title, description, (index+1), sqlDate);
+
+            if(DEFAULT_TASK_ID < 1){
+                //Log.d("DBUGX", AddEditTaskActivity.class.getSimpleName()+"NewTaskMode()"+ intent.hasExtra(UPDATE_MODE));
+                AddEditTaskViewModelFactory factory = new AddEditTaskViewModelFactory(getApplication(), 0);
+                addEditTaskViewModel = new ViewModelProvider(this, factory).get(AddEditTaskViewModel.class);
+                addEditTaskViewModel.insertTask(todo);
+                Toast toast = Toast.makeText(getApplicationContext(), " \" "+ title +" \""+" added successfully.  "+todo.getTaskID(), Toast.LENGTH_LONG);
+                toast.getView().setBackgroundColor(Color.WHITE);
+                toast.show();
+            }
+            else{
+
+                todo.setTaskID(DEFAULT_TASK_ID);
+                addEditTaskViewModel.updateTask(todo);
+                Toast toast = Toast.makeText(getApplicationContext(), " \" "+ title +" \""+" updated successfully.  ", Toast.LENGTH_LONG);
+                toast.getView().setBackgroundColor(Color.WHITE);
+                toast.show();
+
+            }
+
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            Toast.makeText(this, "ExceptionHandling: "+e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+        Log.d("DBUGX", "finish() start");
+        finish();
+        // Toast.makeText(this, "after finish()", Toast.LENGTH_LONG).show();
+        Log.d("DBUGX", "ActivityFinished: end");
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d("DBUGX", AddEditTaskActivity.class.getSimpleName()+"Oncreate()");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_edit_task);
 
         /*Initialise the views*/
-        initViews();
+        initViews();Log.d("DBUGX", AddEditTaskActivity.class.getSimpleName()+" initViews()");
+
+        final Intent intent = getIntent();
+
+        if ((savedInstanceState != null) || (intent.hasExtra(UPDATE_MODE))) {
+            if(savedInstanceState != null){
+                DEFAULT_TASK_ID = savedInstanceState.getInt(UPDATE_MODE);
+                Log.d("DBUGX", AddEditTaskActivity.class.getSimpleName()+": ONSAVEINSTANCESTATE:  "+ DEFAULT_TASK_ID);
+            }
+            if(intent.hasExtra(UPDATE_MODE)){
+                DEFAULT_TASK_ID = intent.getIntExtra(UPDATE_MODE, 0);
+                Log.d("DBUGX", AddEditTaskActivity.class.getSimpleName()+": UpdateMode ON and hasExtraPut() "+ DEFAULT_TASK_ID);
+            }
+            /*Populating views*/
+            btnOK.setText(R.string.update);
+            AddEditTaskViewModelFactory factory = new AddEditTaskViewModelFactory(getApplication(), DEFAULT_TASK_ID);
+            addEditTaskViewModel = new ViewModelProvider(AddEditTaskActivity.this, factory).get(AddEditTaskViewModel.class);
+            final LiveData<TodoEntity> taskList = addEditTaskViewModel.getTask();
+            taskList.observe(this, new Observer<TodoEntity>() {
+
+                @Override
+                public void onChanged(TodoEntity taskEntry) {
+                    taskList.removeObserver(this);
+                    populateUI(taskEntry);
+                }
+            });
+        }
+        else{
+            DEFAULT_TASK_ID = -1;
+            Log.d("DBUGX", AddEditTaskActivity.class.getSimpleName()+": NewTaskMode ON "+DEFAULT_TASK_ID);
+        }
 
         /*Task Priority Drop Down list*/
         // Create an ArrayAdapter using the string array and a default spinner layout
@@ -193,9 +243,8 @@ public class AddEditTaskActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view,
                                        int position, long id) {
-                taskPriorityValue = taskPriority.getSelectedItem().toString();
-                Toast.makeText(getApplicationContext(), taskPriorityValue, Toast.LENGTH_SHORT).show();
-
+               int[] arrayValues =  getPriorityFromViews(taskPriority.getSelectedItemPosition() + 1);
+                setBackgroundPriorityColor(arrayValues[1]);
             }
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
@@ -207,10 +256,10 @@ public class AddEditTaskActivity extends AppCompatActivity {
         taskDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final Calendar cldr = Calendar.getInstance();
-                int day = cldr.get(Calendar.DAY_OF_MONTH);
-                int month = cldr.get(Calendar.MONTH);
-                int year = cldr.get(Calendar.YEAR);
+                final Calendar calendar = Calendar.getInstance();
+                int day = calendar.get(Calendar.DAY_OF_MONTH);
+                int month = calendar.get(Calendar.MONTH);
+                int year = calendar.get(Calendar.YEAR);
 
                 // date picker dialog
                 DatePickerDialog datePickerDialog = new DatePickerDialog(AddEditTaskActivity.this,
@@ -225,39 +274,13 @@ public class AddEditTaskActivity extends AppCompatActivity {
                 datePickerDialog.show();
             }
         });
+        Log.d("DBUGX", AddEditTaskActivity.class.getSimpleName()+"DateDialog()");
 
-        if (savedInstanceState != null && savedInstanceState.containsKey(INSTANCE_TASK_ID)) {
-            mTaskId = savedInstanceState.getInt(INSTANCE_TASK_ID, DEFAULT_TASK_ID);
-        }
-
-        final Intent intent = getIntent();
-        if (intent != null && intent.hasExtra(EXTRA_TASK_ID)) {
-            btnOK.setText("Update");
-            if (mTaskId == DEFAULT_TASK_ID) {
-                // populate the UI
-
-                mTaskId = intent.getIntExtra(EXTRA_TASK_ID, DEFAULT_TASK_ID);
-
-                AddEditTaskViewModelFactory factory = new AddEditTaskViewModelFactory(getApplication(), mTaskId);
-                addEditTaskViewModel = new ViewModelProvider(AddEditTaskActivity.this, factory).get(AddEditTaskViewModel.class);
-
-                addEditTaskViewModel.getTask().observe(this, new Observer<TodoEntity>() {
-                    @Override
-                    public void onChanged(TodoEntity taskEntry) {
-                        addEditTaskViewModel.getTask().removeObserver(this);
-                        populateUI(taskEntry);
-                    }
-                });
-
-            }
-        }else{
-            AddEditTaskViewModelFactory factory = new AddEditTaskViewModelFactory(getApplication(), mTaskId);
-            addEditTaskViewModel = new ViewModelProvider(this, factory).get(AddEditTaskViewModel.class);
-        }
 
         taskTitle.addTextChangedListener(taskInputValidation);
         taskDescription.addTextChangedListener(taskInputValidation);
         taskDate.addTextChangedListener(taskInputValidation);
+        Log.d("DBUGX", AddEditTaskActivity.class.getSimpleName()+"Validation()");
 
         btnOK.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -266,18 +289,22 @@ public class AddEditTaskActivity extends AppCompatActivity {
             }
         });
 
-        btnCancle.setOnClickListener(new View.OnClickListener() {
+
+        banCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent1 = new Intent(getApplicationContext(), MainActivity.class);
-                startActivity(intent1);
+                if(intent1.resolveActivity(getPackageManager()) != null)
+                    startActivity(intent1) ;
             }
         });
 
     }
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        outState.putInt(INSTANCE_TASK_ID, mTaskId);
+        outState.putInt(UPDATE_MODE, DEFAULT_TASK_ID);
         super.onSaveInstanceState(outState);
+        Log.d("DBUGX", AddEditTaskActivity.class.getSimpleName()+": ONSAVEINSTANCESTATE:  "+ outState.getInt(UPDATE_MODE));
     }
 }

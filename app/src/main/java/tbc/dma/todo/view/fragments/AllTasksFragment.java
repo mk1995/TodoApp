@@ -1,5 +1,7 @@
 package tbc.dma.todo.view.fragments;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -8,27 +10,24 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.ItemTouchHelper;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
-import android.widget.SearchView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
+import tbc.dma.todo.helperCLasses.FragmentHelper;
+import tbc.dma.todo.helperCLasses.SearchViewHelper;
 import tbc.dma.todo.R;
 import tbc.dma.todo.adapter.RecyclerViewTaskListAdapter;
 import tbc.dma.todo.model.entity.TodoEntity;
@@ -41,45 +40,30 @@ import tbc.dma.todo.viewModel.AllTasksFragmentViewModel;
  */
 public class AllTasksFragment extends Fragment implements RecyclerViewTaskListAdapter.OnItemClickListener  {
     // Member variables for the adapter and RecyclerView
-    private RecyclerView mRecyclerView;
     private RecyclerViewTaskListAdapter mAdapter;
     private AllTasksFragmentViewModel allTasksFragmentViewModel;
-    private Paint p = new Paint();
+    private final Paint p = new Paint();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_all_tasks, container, false);
+
+        setHasOptionsMenu(true);
+        RecyclerView mRecyclerView = view.findViewById(R.id.recyclerViewAllTasksList);
         allTasksFragmentViewModel = new ViewModelProvider(this).get(AllTasksFragmentViewModel.class);
 
-        // 1. get a reference to recyclerView
-        mRecyclerView = view.findViewById(R.id.recyclerViewAllTasksList);
-
-        // use this setting to improve performance if you know that changes
-        // in content do not change the layout size of the RecyclerView
-        mRecyclerView.setHasFixedSize(true);
-
-        // 2. set layoutManger
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-
-        // 3. create an adapter
-        mAdapter = new RecyclerViewTaskListAdapter(getActivity());
-
-        // 4. set adapter
-        mRecyclerView.setAdapter(mAdapter);
-
-        DividerItemDecoration decoration = new DividerItemDecoration(container.getContext(), DividerItemDecoration.VERTICAL);
-        mRecyclerView.addItemDecoration(decoration);
-
+        FragmentHelper fragmentHelper = new FragmentHelper(mRecyclerView, container);
+        mAdapter = fragmentHelper.initRVHelper();
 
         /**
-         * Add a touch helper to the RecyclerView to recognize when a user swipes to delete an item.
+         *Add a touch helper to the RecyclerView to recognize when a user swipes to delete an item.
          * An ItemTouchHelper enables touch behavior (like swipe and move) on each ViewHolder,
-         and uses callbacks to signal when a user is performing these actions.
+         *and uses callbacks to signal when a user is performing these actions.
          */
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
             @Override
-            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
                 return false;
             }
 
@@ -87,25 +71,46 @@ public class AllTasksFragment extends Fragment implements RecyclerViewTaskListAd
              * Called when a user swipes left or right on a ViewHolder
              * Row is swiped from recycler view
              * */
-
             @Override
-            public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
-                int position = viewHolder.getAdapterPosition();
-                List<TodoEntity> todoList = mAdapter.getTasks();
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int swipeDir) {
+                final int position = viewHolder.getAdapterPosition();
+                final List<TodoEntity> todoList = mAdapter.getTasks();
                 /*swipe to edit the task list*/
                 if (swipeDir == ItemTouchHelper.RIGHT){
                     onItemClick(todoList.get(position));
+
                 }else{
-                    /**
+                    /*
                     * swipe to delete
                     * remove it from adapter
                     * */
-                    allTasksFragmentViewModel.deleteTask(todoList.get(position));
-                    Toast toast = Toast.makeText(getActivity(), " \" "+ todoList.get(position).getTaskTitle() +" \""+" deleted successfully.  ", Toast.LENGTH_LONG);
-                    toast.getView().setBackgroundColor(Color.RED);
-                    toast.show();
+                    DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            switch (which){
+                                case DialogInterface.BUTTON_POSITIVE:
+                                    allTasksFragmentViewModel.deleteTask(todoList.get(position));
+                                    Toast toast = Toast.makeText(getActivity(), " \" "+ todoList.get(position).getTaskTitle() +" \""+" deleted successfully.  ", Toast.LENGTH_LONG);
+                                    toast.getView().setBackgroundColor(Color.WHITE);
+                                    toast.show();
+                                    break;
+
+                                case DialogInterface.BUTTON_NEGATIVE:
+                                    Toast toastNO = Toast.makeText(getActivity(), " Delete operation canceled.", Toast.LENGTH_LONG);
+                                    toastNO.getView().setBackgroundColor(Color.WHITE);
+                                    toastNO.show();
+                                    break;
+                            }
+                        }
+                    };
+                    AlertDialog.Builder ab = new AlertDialog.Builder(getContext());
+                    ab.setMessage("Are you sure to delete?").setPositiveButton("Yes", dialogClickListener)
+                            .setNegativeButton("No", dialogClickListener).show();
+                    mAdapter.notifyDataSetChanged();
+
                 }
             }
+
             /**
              * the foreground view is changed while user is swiping the view.
              *  to customize how RecyclerView's item respond to user interactions like edit/delete while swiping
@@ -121,15 +126,17 @@ public class AllTasksFragment extends Fragment implements RecyclerViewTaskListAd
 
                     if(dX >= 0){
                         p.setColor(Color.parseColor("#FFFFFF"));
-                        RectF background = new RectF((float) itemView.getLeft(), (float) itemView.getTop(), dX,(float) itemView.getBottom());
+                        RectF background = new RectF((float) itemView.getLeft(), (float) itemView.getTop(), dX, (float) itemView.getBottom());
                         c.drawRect(background,p);
+
                         icon = BitmapFactory.decodeResource(getResources(), R.drawable.edit_icon);
                         RectF icon_dest = new RectF((float) itemView.getLeft() + width ,(float) itemView.getTop() + width,(float) itemView.getLeft() + 2*width,(float)itemView.getBottom() - width);
                         c.drawBitmap(icon,null,icon_dest,p);
                     } else {
-                        p.setColor(Color.parseColor("#FFFFFF"));
+                        p.setColor(Color.parseColor("#cdcdcd"));
                         RectF background = new RectF((float) itemView.getRight() + dX, (float) itemView.getTop(),(float) itemView.getRight(), (float) itemView.getBottom());
                         c.drawRect(background,p);
+
                         icon = BitmapFactory.decodeResource(getResources(), R.drawable.delete_icon);
                         RectF icon_dest = new RectF((float) itemView.getRight() - 2*width ,(float) itemView.getTop() + width,(float) itemView.getRight() - width,(float)itemView.getBottom() - width);
                         c.drawBitmap(icon,null,icon_dest,p);
@@ -141,6 +148,7 @@ public class AllTasksFragment extends Fragment implements RecyclerViewTaskListAd
         // attaching the touch helper to recycler view
         }).attachToRecyclerView(mRecyclerView);
 
+        // Observing the datachanges
         allTasksFragmentViewModel.getTasks().observe(requireActivity(), new Observer<List<TodoEntity>>() {
             @Override
             public void onChanged(List<TodoEntity> taskEntries) {
@@ -152,10 +160,16 @@ public class AllTasksFragment extends Fragment implements RecyclerViewTaskListAd
     }
 
     @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        new SearchViewHelper(menu, inflater, mAdapter);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
     public void onItemClick(TodoEntity todoEntity) {
         // Launch AddTaskActivity adding the itemId as an extra in the intent
         Intent intent = new Intent(getActivity(), AddEditTaskActivity.class);
-        intent.putExtra(AddEditTaskActivity.EXTRA_TASK_ID, todoEntity.getTaskID());
+        intent.putExtra(AddEditTaskActivity.UPDATE_MODE, todoEntity.getTaskID());
         startActivity(intent);
     }
 }

@@ -13,10 +13,10 @@ public class TodoEntity {
     @PrimaryKey(autoGenerate = true)
     private int taskID;
 
-    private String taskTitle;
-    private String taskDescription;
-    private int taskPriority;
-    private Date taskDate;
+    private final String taskTitle;
+    private final String taskDescription;
+    private final int taskPriority;
+    private final Date taskDate;
 
     public TodoEntity(String taskTitle, String taskDescription, int taskPriority, Date taskDate) {
         this.taskTitle = taskTitle;
@@ -45,31 +45,15 @@ public class TodoEntity {
         return taskTitle;
     }
 
-    public void setTaskTitle(String taskTitle) {
-        this.taskTitle = taskTitle;
-    }
-
     public String getTaskDescription() {
         return taskDescription;
-    }
-
-    public void setTaskDescription(String taskDescription) {
-        this.taskDescription = taskDescription;
     }
 
     public int getTaskPriority() {
         return taskPriority;
     }
 
-    public void setTaskPriority(int taskPriority) {
-        this.taskPriority = taskPriority;
-    }
-
     public Date getTaskDate() {
         return taskDate;
-    }
-
-    public void setTaskDate(Date taskDate) {
-        this.taskDate = taskDate;
     }
 }

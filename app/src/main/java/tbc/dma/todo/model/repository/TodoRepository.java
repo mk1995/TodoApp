@@ -9,7 +9,8 @@ import tbc.dma.todo.model.entity.TodoEntity;
 import tbc.dma.todo.model.room.AppDatabase;
 
 public class TodoRepository {
-    TodoDao dao;
+
+    final TodoDao dao;
 
     public TodoRepository(AppDatabase appDatabase){
         dao = appDatabase.todoDao();
@@ -28,16 +29,16 @@ public class TodoRepository {
     }
 
     public void updateTask(final TodoEntity task){
-        AppDatabase.getDatabaseWriteExecutor().execute(new Runnable() {
+        AppDatabase.getDbNewFixedThread().execute(new Runnable() {
             @Override
             public void run() {
-                dao.update(task);
+               dao.update(task);
             }
         });
     }
 
     public void deleteTask(final TodoEntity task){
-        AppDatabase.getDatabaseWriteExecutor().execute(new Runnable() {
+        AppDatabase.getDbNewFixedThread().execute(new Runnable() {
             @Override
             public void run() {
                 dao.deleteTask(task);
@@ -46,7 +47,7 @@ public class TodoRepository {
     }
 
     public  void  insertTask(final TodoEntity task){
-        AppDatabase.getDatabaseWriteExecutor().execute(new Runnable() {
+        AppDatabase.getDbNewFixedThread().execute(new Runnable() {
             @Override
             public void run() {
                 dao.insertTask(task);
