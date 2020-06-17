@@ -1,14 +1,17 @@
 package tbc.dma.todo.adapter;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
@@ -39,7 +42,7 @@ public class RecyclerViewTaskListAdapter extends RecyclerView.Adapter<RecyclerVi
     }
 
     public List<TodoEntity> getTasks(){
-        return tasks;
+        return filteredTasks;
     }
 
     /**
@@ -92,7 +95,7 @@ public class RecyclerViewTaskListAdapter extends RecyclerView.Adapter<RecyclerVi
                 public void onClick(View v) {
                     int pos = getAdapterPosition();
                     if (mItemClickListener != null && pos != RecyclerView.NO_POSITION) {
-                        mItemClickListener.onItemClick(tasks.get(pos));
+                        mItemClickListener.onItemClick(filteredTasks.get(pos));
                     }
                 }
             });
@@ -160,32 +163,41 @@ public class RecyclerViewTaskListAdapter extends RecyclerView.Adapter<RecyclerVi
         return new Filter() {
             @Override
             protected FilterResults performFiltering(CharSequence constraint) {
-                String searchString = constraint.toString().toLowerCase().trim();
+                String searchString = constraint.toString().toLowerCase();
+                List<TodoEntity> filteredTaskList = new ArrayList<>();
+
                 if(searchString.isEmpty()){
-                    filteredTasks = tasks;
-                }else{
-                    List<TodoEntity> filteredTaskList = new ArrayList<>();
-                    Log.d("DBUGX", "not null: "+searchString.length());
+                    filteredTaskList = tasks;
+                    Log.d("Search", "String is empty: "+ filteredTaskList.size()+ " searchvalue: " + searchString);
+                }
+                else{
+                    Log.d("Search", "not null: "+searchString.length()+ " searchvalue: " + searchString);
                     for (TodoEntity t : tasks){
                         if (t.getTaskTitle().toLowerCase().contains(searchString)
-
                                 || t.getTaskDescription().toLowerCase().contains(searchString)) {
                             filteredTaskList.add(t);
                         }
                     }
-                    filteredTasks = filteredTaskList;
                     Log.d("Search", "FilteredTaskListCount for "+ searchString +": "+ + filteredTaskList.size());
                 }
                 FilterResults filterResults = new FilterResults();
-                filterResults.values = filteredTasks;
+                filterResults.count = filteredTaskList.size();
+                filterResults.values = filteredTaskList;
                 return filterResults;
             }
             @SuppressWarnings("unchecked")
             @Override
             protected void publishResults(CharSequence constraint, FilterResults results) {
-                filteredTasks = (ArrayList<TodoEntity>) results.values;
-                Log.d("Search", "PublishResultSize: "+ filteredTasks.size());
-                notifyDataSetChanged();
+                if(results.count == 0){
+                    Toast toast = Toast.makeText(mContext, " No Record found. Try with different query. ", Toast.LENGTH_SHORT);
+                    toast.getView().setBackgroundColor(Color.RED);
+                    toast.setGravity(Gravity.CENTER, 0, 0);
+                    toast.show();
+                }
+                    filteredTasks = (ArrayList<TodoEntity>) results.values;
+                    Log.d("Search", "PublishResultSize: " + filteredTasks.size());
+                    notifyDataSetChanged();
+
             }
         };
     }

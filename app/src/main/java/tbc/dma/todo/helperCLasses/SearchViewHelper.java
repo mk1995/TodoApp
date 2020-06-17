@@ -20,15 +20,10 @@ public class SearchViewHelper {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 try{
-                    if(query.length() != 0){
-                        mAdapter.getFilter().filter(query);
-                        //Log.d("Search", "Filter onQueryTextChange");
-                    }else{
-                        Log.d("DBUGX", "Query length is 0");
-                    }
+                    mAdapter.getFilter().filter(query);
                 }
                 catch(Error e){
-                    Log.d("DBUGX", "Error: "+e.getMessage());
+                    Log.d("Search", "Error: "+e.getMessage());
                 }
 
                 return false;
@@ -37,15 +32,10 @@ public class SearchViewHelper {
             @Override
             public boolean onQueryTextChange(String newText) {
                 try{
-                    if(newText.length() != 0){
-                        mAdapter.getFilter().filter(newText);
-                        //Log.d("Search", "Filter onQueryTextChange");
-                    }else{
-                        Log.d("DBUGX", "Query length is 0");
-                    }
+                    mAdapter.getFilter().filter(newText);
                 }
                 catch(Error e){
-                    Log.d("DBUGX", "Error: "+e.getMessage());
+                    Log.d("Search", "Error: "+e.getMessage());
                 }
 
                 return false;
