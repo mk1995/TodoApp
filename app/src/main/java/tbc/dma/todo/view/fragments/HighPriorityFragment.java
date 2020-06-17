@@ -128,7 +128,7 @@ public class HighPriorityFragment extends Fragment implements RecyclerViewTaskLi
     }
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        new SearchViewHelper(menu, inflater, mAdapter);
+        new SearchViewHelper(menu, inflater, mAdapter, getContext());
         super.onCreateOptionsMenu(menu, inflater);
     }
     @Override

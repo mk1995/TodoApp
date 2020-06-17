@@ -168,17 +168,14 @@ public class RecyclerViewTaskListAdapter extends RecyclerView.Adapter<RecyclerVi
 
                 if(searchString.isEmpty()){
                     filteredTaskList = tasks;
-                    Log.d("Search", "String is empty: "+ filteredTaskList.size()+ " searchvalue: " + searchString);
                 }
                 else{
-                    Log.d("Search", "not null: "+searchString.length()+ " searchvalue: " + searchString);
                     for (TodoEntity t : tasks){
                         if (t.getTaskTitle().toLowerCase().contains(searchString)
                                 || t.getTaskDescription().toLowerCase().contains(searchString)) {
                             filteredTaskList.add(t);
                         }
                     }
-                    Log.d("Search", "FilteredTaskListCount for "+ searchString +": "+ + filteredTaskList.size());
                 }
                 FilterResults filterResults = new FilterResults();
                 filterResults.count = filteredTaskList.size();
@@ -194,9 +191,8 @@ public class RecyclerViewTaskListAdapter extends RecyclerView.Adapter<RecyclerVi
                     toast.setGravity(Gravity.CENTER, 0, 0);
                     toast.show();
                 }
-                    filteredTasks = (ArrayList<TodoEntity>) results.values;
-                    Log.d("Search", "PublishResultSize: " + filteredTasks.size());
-                    notifyDataSetChanged();
+                filteredTasks = (ArrayList<TodoEntity>) results.values;
+                notifyDataSetChanged();
 
             }
         };

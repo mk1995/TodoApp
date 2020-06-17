@@ -161,7 +161,7 @@ public class AllTasksFragment extends Fragment implements RecyclerViewTaskListAd
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        new SearchViewHelper(menu, inflater, mAdapter);
+        new SearchViewHelper(menu, inflater, mAdapter, getContext());
         super.onCreateOptionsMenu(menu, inflater);
     }
 
