@@ -2,7 +2,6 @@ package tbc.dma.todo.helperCLasses;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -14,7 +13,7 @@ import tbc.dma.todo.R;
 import tbc.dma.todo.adapter.RecyclerViewTaskListAdapter;
 
 public class SearchViewHelper {
-    private Context mContext;
+    private final Context mContext;
 
     public SearchViewHelper(Menu menu, MenuInflater inflater, final RecyclerViewTaskListAdapter mAdapter, Context context) {
         inflater.inflate(R.menu.menu_search, menu);

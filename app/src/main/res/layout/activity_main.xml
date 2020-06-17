@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
+<merge>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".view.activity.MainActivity"
-    android:orientation="vertical"
-    android:background="@color/colorSearch">
+    android:orientation="vertical">
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tab_main"
@@ -39,3 +39,4 @@
 
     </com.google.android.material.floatingactionbutton.FloatingActionButton>
 </FrameLayout>
+</merge>

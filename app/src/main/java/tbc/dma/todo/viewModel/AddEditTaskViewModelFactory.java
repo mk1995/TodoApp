@@ -1,7 +1,6 @@
 package tbc.dma.todo.viewModel;
 
 import android.app.Application;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
@@ -13,7 +12,6 @@ public class AddEditTaskViewModelFactory extends ViewModelProvider.NewInstanceFa
     private final int taskId;
 
     public AddEditTaskViewModelFactory(Application application, int taskId){
-        Log.d("DBUGX", AddEditTaskViewModelFactory.class.getSimpleName()+" Constructor()");
         this.application = application;
         this.taskId = taskId;
     }

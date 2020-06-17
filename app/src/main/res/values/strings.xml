@@ -1,10 +1,7 @@
 <resources>
     <string name="app_name">Todo</string>
-    <string name="app_title">Todo: Save your important tasks.</string>
-    <string name="searchText">search</string>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="add_new_task">Add New Task</string>
     <string name="title">Title</string>
     <string name="description">Description</string>
@@ -16,7 +13,6 @@
     <string name="title_rv">Title</string>
     <string name="date_RV">01/01/2000</string>
     <string name="search">Search</string>
-    <string name="priority_color">Priority Color</string>
 
     <!--Priority Array List-->
     <string-array name="priority_array">

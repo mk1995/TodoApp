@@ -2,12 +2,12 @@ package tbc.dma.todo.view.activity;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -18,8 +18,10 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -164,7 +166,6 @@ public class AddEditTaskActivity extends AppCompatActivity {
             TodoEntity todo = new TodoEntity(title, description, (index+1), sqlDate);
 
             if(DEFAULT_TASK_ID < 1){
-                //Log.d("DBUGX", AddEditTaskActivity.class.getSimpleName()+"NewTaskMode()"+ intent.hasExtra(UPDATE_MODE));
                 AddEditTaskViewModelFactory factory = new AddEditTaskViewModelFactory(getApplication(), 0);
                 addEditTaskViewModel = new ViewModelProvider(this, factory).get(AddEditTaskViewModel.class);
                 addEditTaskViewModel.insertTask(todo);
@@ -186,31 +187,25 @@ public class AddEditTaskActivity extends AppCompatActivity {
             // TODO Auto-generated catch block
             Toast.makeText(this, "ExceptionHandling: "+e.getMessage(), Toast.LENGTH_LONG).show();
         }
-        Log.d("DBUGX", "finish() start");
         finish();
-        // Toast.makeText(this, "after finish()", Toast.LENGTH_LONG).show();
-        Log.d("DBUGX", "ActivityFinished: end");
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d("DBUGX", AddEditTaskActivity.class.getSimpleName()+"Oncreate()");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_edit_task);
 
         /*Initialise the views*/
-        initViews();Log.d("DBUGX", AddEditTaskActivity.class.getSimpleName()+" initViews()");
+        initViews();
 
         final Intent intent = getIntent();
 
         if ((savedInstanceState != null) || (intent.hasExtra(UPDATE_MODE))) {
             if(savedInstanceState != null){
                 DEFAULT_TASK_ID = savedInstanceState.getInt(UPDATE_MODE);
-                Log.d("DBUGX", AddEditTaskActivity.class.getSimpleName()+": ONSAVEINSTANCESTATE:  "+ DEFAULT_TASK_ID);
             }
             if(intent.hasExtra(UPDATE_MODE)){
                 DEFAULT_TASK_ID = intent.getIntExtra(UPDATE_MODE, 0);
-                Log.d("DBUGX", AddEditTaskActivity.class.getSimpleName()+": UpdateMode ON and hasExtraPut() "+ DEFAULT_TASK_ID);
             }
             /*Populating views*/
             btnOK.setText(R.string.update);
@@ -225,10 +220,10 @@ public class AddEditTaskActivity extends AppCompatActivity {
                     populateUI(taskEntry);
                 }
             });
+
         }
         else{
             DEFAULT_TASK_ID = -1;
-            Log.d("DBUGX", AddEditTaskActivity.class.getSimpleName()+": NewTaskMode ON "+DEFAULT_TASK_ID);
         }
 
         /*Task Priority Drop Down list*/
@@ -274,13 +269,11 @@ public class AddEditTaskActivity extends AppCompatActivity {
                 datePickerDialog.show();
             }
         });
-        Log.d("DBUGX", AddEditTaskActivity.class.getSimpleName()+"DateDialog()");
 
 
         taskTitle.addTextChangedListener(taskInputValidation);
         taskDescription.addTextChangedListener(taskInputValidation);
         taskDate.addTextChangedListener(taskInputValidation);
-        Log.d("DBUGX", AddEditTaskActivity.class.getSimpleName()+"Validation()");
 
         btnOK.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -302,9 +295,22 @@ public class AddEditTaskActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        // can do things when screen size and orientation changes.
+        if(newConfig.orientation == Configuration.ORIENTATION_PORTRAIT){
+            Toast.makeText(this, "Screen rotated: Portrait", Toast.LENGTH_SHORT).show();
+        }
+        else if(newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE){
+            Toast.makeText(this, "Screen rotated: Landscape", Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    @Override
     protected void onSaveInstanceState(Bundle outState) {
         outState.putInt(UPDATE_MODE, DEFAULT_TASK_ID);
         super.onSaveInstanceState(outState);
-        Log.d("DBUGX", AddEditTaskActivity.class.getSimpleName()+": ONSAVEINSTANCESTATE:  "+ outState.getInt(UPDATE_MODE));
     }
 }

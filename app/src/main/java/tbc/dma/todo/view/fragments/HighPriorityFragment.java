@@ -25,10 +25,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 import java.util.Objects;
 
-import tbc.dma.todo.helperCLasses.FragmentHelper;
-import tbc.dma.todo.helperCLasses.SearchViewHelper;
 import tbc.dma.todo.R;
 import tbc.dma.todo.adapter.RecyclerViewTaskListAdapter;
+import tbc.dma.todo.helperCLasses.FragmentHelper;
+import tbc.dma.todo.helperCLasses.SearchViewHelper;
 import tbc.dma.todo.model.entity.TodoEntity;
 import tbc.dma.todo.view.activity.AddEditTaskActivity;
 import tbc.dma.todo.viewModel.HighPriorityFragmentViewModel;
@@ -54,9 +54,9 @@ public class HighPriorityFragment extends Fragment implements RecyclerViewTaskLi
         mAdapter = fragmentHelper.initRVHelper();
 
 
-        /**
-         *Add a touch helper to the RecyclerView to recognize when a user swipes to delete an item.
-         *An ItemTouchHelper enables touch behavior (like swipe and move) on each ViewHolder, and uses callbacks to signal when a user is performing these actions.
+        /*
+         Add a touch helper to the RecyclerView to recognize when a user swipes to delete an item.
+         An ItemTouchHelper enables touch behavior (like swipe and move) on each ViewHolder, and uses callbacks to signal when a user is performing these actions.
          */
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
             @Override

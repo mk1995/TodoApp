@@ -1,7 +1,6 @@
 package tbc.dma.todo.model.room;
 
 import android.content.Context;
-import android.util.Log;
 
 import androidx.room.Database;
 import androidx.room.Room;
@@ -23,8 +22,8 @@ public abstract class AppDatabase extends RoomDatabase {
     private static final String DATABASE_NAME = "TodoApp";
 
     private static final ExecutorService DB_NEW_FIXED_THREAD = Executors.newFixedThreadPool(3);
+
     public static ExecutorService getDbNewFixedThread() {
-        Log.d("DBUGX", AppDatabase.class.getSimpleName() +"getDbNewFixedThread: Returning new THREAD");
         return DB_NEW_FIXED_THREAD;
     }
 
@@ -54,13 +53,11 @@ public abstract class AppDatabase extends RoomDatabase {
 
               */
             synchronized (LOCK){
-                Log.d("DBUGX", AppDatabase.class.getSimpleName() +"Creating a new database instance; inside synchronized (getInstance(context)");
                 appDatabaseInstance = Room.databaseBuilder(context.getApplicationContext(),
                         AppDatabase.class, AppDatabase.DATABASE_NAME)
                         .build();
             }
         }
-        Log.d("DBUGX", "Exiting "+AppDatabase.class.getSimpleName() +". Getting the database instance: ");
         return appDatabaseInstance;
     }
 }

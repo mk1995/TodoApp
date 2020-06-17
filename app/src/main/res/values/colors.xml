@@ -3,10 +3,6 @@
     <color name="colorPrimary">#6200EE</color>
     <color name="colorPrimaryDark">#3700B3</color>
     <color name="colorAccent">#03DAC5</color>
-    <color name="colorSearch">#C8C6C6</color>
-    <color name="colorSearchText">#060607</color>
-    <color name="colorMainActivityBG">#FFFFFF</color>
-
     <color name="colorHighPriority">#B30000</color>
     <color name="colorMediumPriority">#1A1ADD</color>
     <color name="colorLowPriority">#009A0A</color>

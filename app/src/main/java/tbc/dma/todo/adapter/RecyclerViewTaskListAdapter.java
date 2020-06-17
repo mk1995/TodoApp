@@ -3,7 +3,6 @@ package tbc.dma.todo.adapter;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -108,7 +107,7 @@ public class RecyclerViewTaskListAdapter extends RecyclerView.Adapter<RecyclerVi
             TodoEntity taskEntry = filteredTasks.get(pos);
 
             taskTitleView.setText(taskEntry.getTaskTitle());
-            String descriptionText = "";
+            String descriptionText;
             if(taskEntry.getTaskDescription().length() > 30){
                 descriptionText = taskEntry.getTaskDescription().substring(0, 28)+" ...";
             }else{
