@@ -32,6 +32,8 @@ dependencies {
     implementation 'androidx.navigation:navigation-fragment:2.2.2'
     implementation 'androidx.navigation:navigation-ui:2.2.2'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+
+    /*Lifecycle with livedata dependency*/
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     implementation 'androidx.cardview:cardview:1.0.0'
 
